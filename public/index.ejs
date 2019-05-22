@@ -45,21 +45,19 @@ html, body{
 <nav class="navbar navbar-light bg-light">
   <a class="navbar-brand" href="#">いらすと</a>
   <ul class="navbar-nav mr-auto">
+<%
+if( oauth != null ){
+%>
+  <select class="form-control" id="channel_ids" name="channel_ids">
+  </select>
+<%
+}
+%>
+
   </ul>
   <ul class="navbar-nav float-right" style="float:right!important;" id="navbar">
   </ul>
 </nav>
-
-<%
-if( oauth != null ){
-%>
-<div>
-  Channel : <select id="channel_ids" name="channel_ids">
-  </select>
-</div>
-<%
-}
-%>
 
 <select id="select_color" name="select_color">
   <option style="color:black;" value="transparent">透明</option>
@@ -134,9 +132,9 @@ if( oauth != null ){
   user_id = '<%= oauth.user_id %>';
 
   //. ログインしている
-  var dropdown = '<div class="dropdown"><button type="button" class="btn btn-secondary dropdown-toggle" id="navbarDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i><%= oauth.user_id %></button>'
+  var dropdown = '<div class="dropdown"><button type="button" class="btn btn-secondary dropdown-toggle" id="navbarDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<%= oauth.user_id %>"><i class="fas fa-user"></i></button>'
     + '<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuButton">'
-    + '<a class="dropdown-item" href="#" title="reload" onClick="initTable();"><i class="fas fa-sync-alt"></i> Reload</a>'
+    //+ '<a class="dropdown-item" href="#" title="reload" onClick="initTable();"><i class="fas fa-sync-alt"></i> Reload</a>'
     + '<a class="dropdown-item" href="#" title="logout" onClick="logout();"><i class="fas fa-sign-out-alt"></i> Logout</a>'
     + '</div>'
     + '</div>';

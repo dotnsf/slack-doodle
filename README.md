@@ -9,7 +9,23 @@ Sample Application for Skack API, which can upload your doodle in your Slack cha
 
 - Slack account
 
-- Slack client_id & client_secret
+- Slack App
+
+    - https://api.slack.com/applications
+
+    - Get client_id & client_secret, and edit them in settings.js
+
+    - Set proper redirect URL
+
+        - http(s)://xxx.xxxx.xxx/slack/callback
+
+    - Add following minimum scopes:
+
+        - channels:read
+
+        - chat:write:user
+
+        - files:write:user
 
 - Public application server for Node.js
 
