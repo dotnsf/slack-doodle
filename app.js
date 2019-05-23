@@ -81,7 +81,7 @@ app.get( '/slack/callback', function( req, res, next ){
   }
 });
 
-app.post( '/slack/logout', function( req, res ){
+app.get( '/slack/logout', function( req, res ){
   req.session.token = null;
   req.session.oauth = null;
   //res.redirect( '/' );

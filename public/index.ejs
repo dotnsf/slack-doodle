@@ -43,19 +43,19 @@ html, body{
 <body>
 
 <nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="#">いらすと</a>
-  <ul class="navbar-nav mr-auto">
+  <ul class="navbar-nav mr-auto" id="navbar">
 <%
 if( oauth != null ){
 %>
   <select class="form-control" id="channel_ids" name="channel_ids">
   </select>
 <%
+}else{
+%>
+  <li class="nav-item"><a class="nav-link" href="#" onClick="login()"><i class="fas fa-sign-in-alt"></i>Login</a></li>
+<%
 }
 %>
-
-  </ul>
-  <ul class="navbar-nav float-right" style="float:right!important;" id="navbar">
   </ul>
 </nav>
 
@@ -132,20 +132,11 @@ if( oauth != null ){
   user_id = '<%= oauth.user_id %>';
 
   //. ログインしている
-  var dropdown = '<div class="dropdown"><button type="button" class="btn btn-secondary dropdown-toggle" id="navbarDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<%= oauth.user_id %>"><i class="fas fa-user"></i></button>'
-    + '<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuButton">'
-    //+ '<a class="dropdown-item" href="#" title="reload" onClick="initTable();"><i class="fas fa-sync-alt"></i> Reload</a>'
-    + '<a class="dropdown-item" href="#" title="logout" onClick="logout();"><i class="fas fa-sign-out-alt"></i> Logout</a>'
-    + '</div>'
-    + '</div>';
-  $('#navbar').append( '<li class="nav-item">' + dropdown + '</li>' );
-
   initChannelIds();
 <%
 }else{
 %>
   //. ログインしていない
-  $('#navbar').append( '<li class="nav-item"><a class="nav-link" href="#" onClick="login()"><i class="fas fa-sign-in-alt"></i>Login</a></li>' );
 <%
 }
 %>
@@ -162,9 +153,8 @@ function logout(){
   if( window.confirm( 'Logout?' ) ){
     var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
     $.ajax({
-      type: 'POST',
+      type: 'GET',
       url: '/slack/logout',
-      data: {},
       success: function( data ){
         obj.remove();
         window.location.href = '/';
