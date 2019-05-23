@@ -7,9 +7,7 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <link href="//use.fontawesome.com/releases/v5.8.1/css/all.css" rel="stylesheet"/>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" media="screen"/>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css" rel="stylesheet" media="screen"/>
+<script src="./cvi_busy_lib.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 
@@ -22,21 +20,6 @@ html, body{
 }
 #mycanvas{
   border: 1px solid #333;
-}
-
-.slick-slide{
-  position: relative;
-}
-.slick-slide .caption{
-  position: absolute;
-  left: 0;
-  z-index: 2;
-  width: calc(100% - 40px);
-  padding: 20px;
-  color: #003;
-  font-size: 14px;
-  opacity: 1;
-  transition: .3s ease;
 }
 </style>
 </head>
@@ -73,6 +56,7 @@ if( oauth != null ){
   <option style="color:#ef8f9c;" value="#ef8f9c">ピンク</option>
   <option style="color:#ead2ad;" value="#ead2ad">肌</option>
   <option style="color:#7c6035;" value="#7c6035">茶</option>
+  <!-- <option style="color:black" value="black" id="colorpick">選択</option> -->
 </select>
 
 <select id="select_linewidth" name="select_linewidth">
@@ -344,6 +328,11 @@ function init(){
   });
 
   $('#select_color').change( function(){
+    /*
+    var colorpick_selected = $('#colorpick').prop( 'selected' );
+    console.log( 'colorpick_selected = ' + colorpick_selected );
+    */
+
     var color = $(this).val();
     if( color == 'white' ){
       color = 'lightgray';
@@ -425,6 +414,7 @@ function post(){
   formData.append( 'image', blob );    //. <form enctype='multipart/formdata'><input name='image' type='file'/> ...
   formData.append( 'userId', userId );
   formData.append( 'channel_id', channel_id );
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'posting..', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'POST',
     url: '/image',
@@ -432,9 +422,11 @@ function post(){
     contentType: false,
     processData: false,
     success: function( result, dataType ){
+      obj.remove();
       console.log( result );
     },
     error: function( jqXHR, textStatus, errorThrown ){
+      obj.remove();
       console.log( textStatus + ': ' + errorThrown );
     }
   });
@@ -525,23 +517,6 @@ function redrawCanvas(){
       }
     }
   }
-}
-
-function imgClick( img_url ){
-  var data = {
-    type: 'image',
-    originalContentUrl: base_url + img_url,
-    previewImageUrl: base_url + img_url + '&att=thumbnail'
-  };
-
-  liff.sendMessages([
-    data
-  ]).then( () => {
-    console.log( 'message sent' );
-    liff.closeWindow();
-  }).catch( ( err ) => {
-    console.log( 'error', err );
-  });
 }
 </script>
 </body>
