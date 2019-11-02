@@ -10,7 +10,7 @@
         "cfenv": "~1.0.0",
         "cors": "2.8.x",
         "ejs": "2.5.5",
-        "express": "4.1.x",
+        "express": "4.17.x",
         "express-session": "^1.16.1",
         "fs": "~0.0.1",
         "jsonwebtoken": "^8.5.1",
