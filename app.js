@@ -3,7 +3,6 @@
 var express = require( 'express' ),
     basicAuth = require( 'basic-auth-connect' ),
     cors = require( 'cors' ),
-    cfenv = require( 'cfenv' ),
     multer = require( 'multer' ),
     bodyParser = require( 'body-parser' ),
     fs = require( 'fs' ),
@@ -14,8 +13,6 @@ var express = require( 'express' ),
     uuidv1 = require( 'uuid/v1' ),
     app = express();
 var settings = require( './settings' );
-
-var appEnv = cfenv.getAppEnv();
 
 app.use( multer( { dest: './tmp/' } ).single( 'image' ) );
 app.use( bodyParser.urlencoded( { extended: true } ) );
@@ -237,5 +234,6 @@ function compareByTimestamp( a, b ){
 }
 
 
-app.listen( appEnv.port );
-console.log( "server stating on " + appEnv.port + " ..." );
+var port = process.env.PORT || 8080;
+app.listen( port );
+console.log( "server stating on " + port + " ..." );

@@ -7,7 +7,6 @@
     "dependencies": {
         "basic-auth-connect": "1.0.x",
         "body-parser": "1.17.x",
-        "cfenv": "~1.0.0",
         "cors": "2.8.x",
         "ejs": "2.5.5",
         "express": "4.1.x",
@@ -20,6 +19,6 @@
     },
     "repository": {},
     "engines": {
-        "node": "6.x"
+        "node": "14.x"
     }
 }
