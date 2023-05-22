@@ -2,7 +2,6 @@
 
 var express = require( 'express' ),
     basicAuth = require( 'basic-auth-connect' ),
-    cors = require( 'cors' ),
     multer = require( 'multer' ),
     bodyParser = require( 'body-parser' ),
     fs = require( 'fs' ),
@@ -10,9 +9,22 @@ var express = require( 'express' ),
     jwt = require( 'jsonwebtoken' ),
     request = require( 'request' ),
     session = require( 'express-session' ),
-    uuidv1 = require( 'uuid/v1' ),
     app = express();
-var settings = require( './settings' );
+
+var SLACK_CLIENT_ID = 'SLACK_CLIENT_ID' in process.env ? process.env.SLACK_CLIENT_ID : '';
+var SLACK_CLIENT_SECRET = 'SLACK_CLIENT_SECRET' in process.env ? process.env.SLACK_CLIENT_SECRET : '';
+var SUPER_SECRET = 'SUPER_SECRET' in process.env ? process.env.SLACK_SUPER_SECRET : 'slackdoodle';
+
+var settings_cors = 'CORS' in process.env ? process.env.CORS : '';
+app.all( '/*', function( req, res, next ){
+  if( settings_cors ){
+    res.setHeader( 'Access-Control-Allow-Origin', settings_cors );
+    res.setHeader( 'Access-Control-Allow-Methods', '*' );
+    res.setHeader( 'Access-Control-Allow-Headers', '*' );
+    res.setHeader( 'Vary', 'Origin' );
+  }
+  next();
+});
 
 app.use( multer( { dest: './tmp/' } ).single( 'image' ) );
 app.use( bodyParser.urlencoded( { extended: true } ) );
@@ -23,10 +35,8 @@ app.use( express.static( __dirname + '/public' ) );
 app.set( 'views', __dirname + '/public' );
 app.set( 'view engine', 'ejs' );
 
-app.use( cors() );
-
 app.use( session({
-  secret: settings.superSecret,
+  secret: SUPER_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -41,7 +51,7 @@ app.get( '/slack/login', function( req, res ){
   if( req.session.oauth ){
     res.redirect( '/' );
   }else{
-    res.redirect( 'https://slack.com/oauth/authorize?client_id=' + settings.slack_client_id + '&scope=chat:write:user,files:write:user,channels:read' );
+    res.redirect( 'https://slack.com/oauth/authorize?client_id=' + SLACK_CLIENT_ID + '&scope=chat:write:user,files:write:user,channels:read' );
   }
 });
 
@@ -49,7 +59,7 @@ app.get( '/slack/callback', function( req, res, next ){
   var code = req.query.code;
   if( code ){
     var option = {
-      url: 'https://slack.com/api/oauth.access?client_id=' + settings.slack_client_id + '&client_secret=' + settings.slack_client_secret + '&code=' + code,
+      url: 'https://slack.com/api/oauth.access?client_id=' + SLACK_CLIENT_ID + '&client_secret=' + SLACK_CLIENT_SECRET + '&code=' + code,
       method: 'GET'
     };
     request( option, ( err0, res0, body0 ) => {
@@ -66,14 +76,12 @@ app.get( '/slack/callback', function( req, res, next ){
         req.session.oauth.team_name = body0.team_name;
         req.session.oauth.access_token = body0.access_token;
 
-        var token = jwt.sign( req.session.oauth, settings.superSecret, { expiresIn: '25h' } );
+        var token = jwt.sign( req.session.oauth, SUPER_SECRET, { expiresIn: '25h' } );
         req.session.token = token;
-        //res.send( "Worked." );
         res.redirect( '/' );
       }
     });
   }else{
-    //next( new Error( "you are not supposed to be here." ) );
     res.redirect( '/' );
   }
 });
@@ -81,8 +89,7 @@ app.get( '/slack/callback', function( req, res, next ){
 app.get( '/slack/logout', function( req, res ){
   req.session.token = null;
   req.session.oauth = null;
-  //res.redirect( '/' );
-  res.write( JSON.stringify( { status: true }, 2, null ) );
+  res.write( JSON.stringify( { status: true }, null, 2 ) );
   res.end();
 });
 
@@ -90,7 +97,7 @@ app.get( '/slack/logout', function( req, res ){
 app.get( '/', function( req, res ){
   if( req.session && req.session.token ){
     var token = req.session.token;
-    jwt.verify( token, settings.superSecret, function( err, oauth ){
+    jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
         //console.log( oauth );
         res.render( 'index', { oauth: oauth } );
@@ -109,7 +116,7 @@ app.get( '/channels', function( req, res ){
 
   if( req.session && req.session.token ){
     var token = req.session.token;
-    jwt.verify( token, settings.superSecret, function( err, oauth ){
+    jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
         //. https://api.slack.com/methods/channels.list
         var option = {
@@ -153,7 +160,7 @@ app.post( '/image', function( req, res ){
 
   if( req.session && req.session.token ){
     var token = req.session.token;
-    jwt.verify( token, settings.superSecret, function( err, oauth ){
+    jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
         var imgpath = req.file.path;
         var imgtype = req.file.mimetype;
