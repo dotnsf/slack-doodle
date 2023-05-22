@@ -121,6 +121,7 @@ app.get( '/channels', function( req, res ){
     var token = req.session.token;
     jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
+        //. #3
         //. https://api.slack.com/changelog/2020-01-deprecating-antecedents-to-the-conversations-api
         //. https://api.slack.com/docs/conversations-api
         //. https://api.slack.com/methods/channels.list -> https://api.slack.com/methods/conversations.list
@@ -133,10 +134,10 @@ app.get( '/channels', function( req, res ){
             return res.status( 403 ).send( { status: false, error: err0 } );
           }else{
             if( typeof body0 == 'string' ){ body0 = JSON.parse( body0 ); }
-            console.log( {body0} );  //. { ok: false, error: 'unknown_method', req_method: 'channels.list' }
+            //console.log( {body0} );  //. #3 { ok: false, error: 'unknown_method', req_method: 'channels.list' }
             if( body0 && body0.ok ){
               var channels = [];
-              body0.channels.forEach( function( channel ){  //. TypeError: Cannot read properties of undefined (reading 'forEach')
+              body0.channels.forEach( function( channel ){
                 if( channel.is_channel ){
                   channels.push( channel );
                 }
