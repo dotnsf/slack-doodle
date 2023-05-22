@@ -102,7 +102,7 @@ app.get( '/', function( req, res ){
     var token = req.session.token;
     jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
-        console.log( oauth );
+        //console.log( oauth );
         res.render( 'index', { oauth: oauth } );
       }else{
         console.log( err );
