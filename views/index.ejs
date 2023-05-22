@@ -77,8 +77,8 @@ $(function(){
   }
 
   djs = $('#djs_main').doodlejs({});
-  djs.__proto__.__sendImage = sendImage;        //. sendImage を上書き
-  //djs.__proto__.__submitCanvas = saveImage;     //. submitCanvas を上書き
+  //djs.__proto__.__sendImage = sendImage;        //. sendImage を上書き
+  djs.__proto__.__submitCanvas = sendImage;     //. submitCanvas を上書き
 <%
 if( oauth != null ){
 %>
