@@ -15,7 +15,7 @@ require( 'dotenv' ).config();
 
 var SLACK_CLIENT_ID = 'SLACK_CLIENT_ID' in process.env ? process.env.SLACK_CLIENT_ID : '';
 var SLACK_CLIENT_SECRET = 'SLACK_CLIENT_SECRET' in process.env ? process.env.SLACK_CLIENT_SECRET : '';
-var SUPER_SECRET = 'SLACK_SUPER_SECRET' in process.env ? process.env.SLACK_SUPER_SECRET : 'slackdoodle';
+var SUPER_SECRET = 'SUPER_SECRET' in process.env ? process.env.SUPER_SECRET : 'slackdoodle';
 
 var settings_cors = 'CORS' in process.env ? process.env.CORS : '';
 app.all( '/*', function( req, res, next ){
@@ -102,7 +102,7 @@ app.get( '/', function( req, res ){
     var token = req.session.token;
     jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
-        //console.log( oauth );
+        console.log( oauth );
         res.render( 'index', { oauth: oauth } );
       }else{
         console.log( err );
