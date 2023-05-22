@@ -58,21 +58,17 @@ app.get( '/slack/login', function( req, res ){
 });
 
 app.get( '/slack/callback', function( req, res, next ){
-  console.log( 'req.query', req.query );
   var code = req.query.code;
   if( code ){
-  console.log( '1' );
     var option = {
       url: 'https://slack.com/api/oauth.access?client_id=' + SLACK_CLIENT_ID + '&client_secret=' + SLACK_CLIENT_SECRET + '&code=' + code,
       method: 'GET'
     };
     request( option, ( err0, res0, body0 ) => {
       if( err0 ){
-  console.log( {err0} );
         return res.status( 403 ).send( { status: false, error: err0 } );
       }else{
         if( typeof body0 == 'string' ){ body0 = JSON.parse( body0 ); }
-  console.log( {body0} );
         var access_token = body0.access_token;
 
         req.session.oauth = {};
@@ -83,14 +79,12 @@ app.get( '/slack/callback', function( req, res, next ){
         req.session.oauth.access_token = body0.access_token;
 
         var token = jwt.sign( req.session.oauth, SUPER_SECRET, { expiresIn: '25h' } );
-  console.log( {token} );
         var access_token = body0.access_token;
         req.session.token = token;
         res.redirect( '/' );
       }
     });
   }else{
-  console.log( '2' );
     res.redirect( '/' );
   }
 });
@@ -134,12 +128,14 @@ app.get( '/channels', function( req, res ){
         };
         request( option, ( err0, res0, body0 ) => {
           if( err0 ){
+            console.log( {err0} );
             return res.status( 403 ).send( { status: false, error: err0 } );
           }else{
-            body0 = JSON.parse( body0 );
+            if( typeof body0 == 'string' ){ body0 = JSON.parse( body0 ); }
+            console.log( {body0} );
             //. body0 = { "ok": true, "channels": [] }
             var channels = [];
-            body0.channels.forEach( function( channel ){
+            body0.channels.forEach( function( channel ){  //. TypeError: Cannot read properties of undefined (reading 'forEach')
               if( channel.is_channel ){
                 channels.push( channel );
               }
