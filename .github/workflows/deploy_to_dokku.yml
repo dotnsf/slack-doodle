@@ -5,7 +5,7 @@ name: 'deploy to dokku'
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -20,6 +20,6 @@ jobs:
         uses: dokku/github-action@master
         with:
           # specify the `master` branch as the remote branch to push to
-          branch: 'main'
+          branch: 'master'
           git_remote_url: 'ssh://dokku@yellowmix.net:22/slack-doodle'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
