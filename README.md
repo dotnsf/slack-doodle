@@ -11,7 +11,11 @@ Sample Application for Skack API, which can upload your doodle in your Slack cha
 
 - Slack App
 
-    - https://api.slack.com/applications
+    - Login to https://api.slack.com/apps
+
+      - Your app would be enabled only for this user's Slack workspaces:
+
+    - Create app
 
     - Get client_id & client_secret, and edit them in settings.js
 
