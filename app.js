@@ -11,9 +11,11 @@ var express = require( 'express' ),
     session = require( 'express-session' ),
     app = express();
 
+require( 'dotenv' ).config();
+
 var SLACK_CLIENT_ID = 'SLACK_CLIENT_ID' in process.env ? process.env.SLACK_CLIENT_ID : '';
 var SLACK_CLIENT_SECRET = 'SLACK_CLIENT_SECRET' in process.env ? process.env.SLACK_CLIENT_SECRET : '';
-var SUPER_SECRET = 'SUPER_SECRET' in process.env ? process.env.SLACK_SUPER_SECRET : 'slackdoodle';
+var SUPER_SECRET = 'SLACK_SUPER_SECRET' in process.env ? process.env.SLACK_SUPER_SECRET : 'slackdoodle';
 
 var settings_cors = 'CORS' in process.env ? process.env.CORS : '';
 app.all( '/*', function( req, res, next ){
