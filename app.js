@@ -121,28 +121,35 @@ app.get( '/channels', function( req, res ){
     var token = req.session.token;
     jwt.verify( token, SUPER_SECRET, function( err, oauth ){
       if( !err && oauth ){
-        //. https://api.slack.com/methods/channels.list
+        //. https://api.slack.com/changelog/2020-01-deprecating-antecedents-to-the-conversations-api
+        //. https://api.slack.com/docs/conversations-api
+        //. https://api.slack.com/methods/channels.list -> https://api.slack.com/methods/conversations.list
         var option = {
-          url: 'https://slack.com/api/channels.list?token=' + oauth.access_token + '&pretty=1',
+          url: 'https://slack.com/api/conversations.list?token=' + oauth.access_token + '&pretty=1',
           method: 'GET'
         };
         request( option, ( err0, res0, body0 ) => {
           if( err0 ){
-            console.log( {err0} );
             return res.status( 403 ).send( { status: false, error: err0 } );
           }else{
             if( typeof body0 == 'string' ){ body0 = JSON.parse( body0 ); }
-            console.log( {body0} );
-            //. body0 = { "ok": true, "channels": [] }
-            var channels = [];
-            body0.channels.forEach( function( channel ){  //. TypeError: Cannot read properties of undefined (reading 'forEach')
-              if( channel.is_channel ){
-                channels.push( channel );
-              }
-            });
-            var p = JSON.stringify( { status: true, channels: channels }, null, 2 );
-            res.write( p );
-            res.end();
+            console.log( {body0} );  //. { ok: false, error: 'unknown_method', req_method: 'channels.list' }
+            if( body0 && body0.ok ){
+              var channels = [];
+              body0.channels.forEach( function( channel ){  //. TypeError: Cannot read properties of undefined (reading 'forEach')
+                if( channel.is_channel ){
+                  channels.push( channel );
+                }
+              });
+              var p = JSON.stringify( { status: true, channels: channels }, null, 2 );
+              res.write( p );
+              res.end();
+            }else{
+              var p = JSON.stringify( { status: false, error: body0.error }, null, 2 );
+              res.status( 400 );
+              res.write( p );
+              res.end();
+            }
           }
         });
       }else{
