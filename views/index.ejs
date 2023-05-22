@@ -63,6 +63,7 @@ if( oauth != null ){
 
 <script>
 var djs = null;
+var userId = null;
 
 $(function(){
   //. ヒストリバック無効化
@@ -82,7 +83,7 @@ $(function(){
 <%
 if( oauth != null ){
 %>
-  user_id = '<%= oauth.user_id %>';
+  userId = '<%= oauth.user_id %>';
 
   //. ログインしている
   initChannelIds();
